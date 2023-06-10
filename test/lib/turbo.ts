@@ -1,3 +1,7 @@
+
+let loggedTurboDev = false
+let loggedTurboGlob = false
+
 /**
  * Utility function to determine if a given test case needs to run with --turbo.
  *
@@ -15,9 +19,12 @@ export function shouldRunTurboDevTest(): boolean {
   const shouldRunTurboDev = !!process.env.__INTERNAL_NEXT_DEV_TEST_TURBO_DEV
   // short-circuit to run all the test with --turbo enabled skips glob matching costs
   if (shouldRunTurboDev) {
-    console.log(
-      `Running tests with --turbo via custom environment variable __INTERNAL_NEXT_DEV_TEST_TURBO_DEV`
-    )
+    if (!loggedTurboDev) {
+      require('console').log(
+        `Running tests with --turbo because __INTERNAL_NEXT_DEV_TEST_TURBO_DEV is set`
+      )
+      loggedTurboDev = true
+    }
     return true
   }
 
@@ -37,9 +44,12 @@ export function shouldRunTurboDevTest(): boolean {
   const isMatch = matches.some((match) => testPath.includes(match))
 
   if (isMatch) {
-    console.log(
-      `Running tests with --turbo via custom environment variable __INTERNAL_NEXT_DEV_TEST_TURBO_GLOB_MATCH`
-    )
+    if (!loggedTurboGlob) {
+      require('console').log(
+        `Running tests with --turbo because __INTERNAL_NEXT_DEV_TEST_TURBO_GLOB_MATCH matches`
+      )
+      loggedTurboGlob = true
+    }
   }
 
   // If the test path matches the glob pattern, add additional case to run the test with `--turbo` flag.
